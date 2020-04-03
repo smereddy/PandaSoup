@@ -79,13 +79,13 @@ def fetch_block_village(debug):
             blocks = {'Narpatganj': '1112'}
         else:
             blocks = get_blocks(distID)
-            
+        
         for block, blockid in blocks.items():
             if debug:
                 panchayats = ['93760', '97959']
             else:
                 panchayats = get_panchayats(blockid)
-
+            
             for panchayatID in panchayats:
                 print('Fetching Villahe SGH info for panchayat: %s' % block)
                 html = "http://223.30.251.84:9090/dashboard/reports/blockCboDetails/panchayatnameformedshg.html?reportType=html&panchayatId=" + panchayatID
@@ -179,6 +179,53 @@ def fetch_block_SHG():
     jeevika.to_csv(filename)
 
 
+def specific_blocks():
+    blocks = ['1200', '1082', '1278', '1096', '1130', '1270', '1210', '1131', '1135', '1272', '1089', '1088', '1302',
+              '1209', '1048', '1288', '1274', '1276', '1279', '1199', '1322', '1283', '1268', '1092', '1051', '1187',
+              '1299', '1428', '1083', '1094', '1225', '1208', '1099']
+    jeevika = pd.DataFrame()
+    
+    for blockid in blocks:
+        print('Fetching panchayats Blocks: %s' % blockid)
+        
+        panchayats = get_panchayats(blockid)
+        
+        for panchayatID in panchayats:
+            print('Fetching Villahe SGH info for panchayat: %s' % panchayatID)
+            html = "http://223.30.251.84:9090/dashboard/reports/blockCboDetails/panchayatnameformedshg.html?reportType=html&panchayatId=" + panchayatID
+            lis = pd.read_html(html)
+            length = len(lis)
+            for i in range(length):
+                if i == 0:
+                    continue
+                else:
+                    try:
+                        df_v1 = lis[i]
+                        df_v2 = df_v1.iloc[4:, 2:16]
+                        jeevika = jeevika.append(df_v2)
+                    except:
+                        continue
+    
+    jeevika.columns = ['District Name',
+                       'BLOCK NAME',
+                       'PANCHAYAT NAME',
+                       'VILLAGE NAME',
+                       'MOHALLA NAME',
+                       'SHG NAME',
+                       'FORMATION DATE',
+                       'Total Member',
+                       'SC',
+                       'ST',
+                       'EBC / SC',
+                       'OTHERS',
+                       'SAVING ACCOUNTS',
+                       'LOAN ACCOUNTS']
+    jeevika = jeevika[jeevika['District Name'].notna()]
+    print('Dumping data into CSV')
+    filename = 'village.csv'
+    jeevika.to_csv(filename)
+
+
 if __name__ == "__main__":
     '''
     Set Debug to "True" is you want to test this script
@@ -187,4 +234,5 @@ if __name__ == "__main__":
     debug = True
     # fetch_block_SHG(debug)
     # fetch_panchayat_SHG(debug)
-    fetch_block_village(debug)
+    # fetch_block_village(debug)
+    specific_blocks()
