@@ -68,24 +68,12 @@ def get_panchayats(block):
 
 
 def fetch_block_village(debug):
-    if debug:
-        districts = {'ARARIA': '188'}
-    else:
-        districts = get_districts()
-    
+    districts = {'ARARIA': '188'} if debug else get_districts()
     jeevika = pd.DataFrame()
     for district, distID in districts.items():
-        if debug:
-            blocks = {'Narpatganj': '1112'}
-        else:
-            blocks = get_blocks(distID)
-        
+        blocks = {'Narpatganj': '1112'} if debug else get_blocks(distID)
         for block, blockid in blocks.items():
-            if debug:
-                panchayats = ['93760', '97959']
-            else:
-                panchayats = get_panchayats(blockid)
-            
+            panchayats = ['93760', '97959'] if debug else get_panchayats(blockid)
             for panchayatID in panchayats:
                 print('Fetching Villahe SGH info for panchayat: %s' % block)
                 html = "http://223.30.251.84:9090/dashboard/reports/blockCboDetails/panchayatnameformedshg.html?reportType=html&panchayatId=" + panchayatID
@@ -101,7 +89,7 @@ def fetch_block_village(debug):
                             jeevika = jeevika.append(df_v2)
                         except:
                             continue
-    
+
     jeevika.columns = ['District Name',
                        'BLOCK NAME',
                        'PANCHAYAT NAME',
@@ -123,17 +111,10 @@ def fetch_block_village(debug):
 
 
 def fetch_panchayat_SHG():
-    if debug:
-        districts = {'ARARIA': '188'}
-    else:
-        districts = get_districts()
-    
+    districts = {'ARARIA': '188'} if debug else get_districts()
     jeevika = pd.DataFrame()
     for district, distID in districts.items():
-        if debug:
-            blocks = {'Narpatganj': '1112'}
-        else:
-            blocks = get_blocks(distID)
+        blocks = {'Narpatganj': '1112'} if debug else get_blocks(distID)
         for block, blockid in blocks.items():
             print('Fetching SGH info for block: %s' % block)
             html = "http://223.30.251.84:9090/dashboard/reports/blockCboDetails/cbomappanchayatformedshg.html?reportType=html&blockId=" + blockid
@@ -147,7 +128,7 @@ def fetch_panchayat_SHG():
                 jeevika = jeevika.append(df_v2)
             except:
                 continue
-    
+
     jeevika.columns = ['Panchayat', 'SHG Formed', 'District', 'Block']
     print('Dumping data into CSV')
     filename = 'panchayat.csv'
@@ -155,10 +136,7 @@ def fetch_panchayat_SHG():
 
 
 def fetch_block_SHG():
-    if debug:
-        districts = {'ARARIA': '188'}
-    else:
-        districts = get_districts()
+    districts = {'ARARIA': '188'} if debug else get_districts()
     jeevika = pd.DataFrame()
     for district, distID in districts.items():
         html = "http://223.30.251.84:9090/dashboard/reports/blockCboDetails/cbomapping.html?districtId=" + distID
@@ -172,7 +150,7 @@ def fetch_block_SHG():
             jeevika = jeevika.append(df_v2)
         except:
             continue
-    
+
     jeevika.columns = ['Block', 'SHG Formed', 'Member Under', 'District']
     print('Dumping data into CSV')
     filename = 'jeevikablock.csv'
